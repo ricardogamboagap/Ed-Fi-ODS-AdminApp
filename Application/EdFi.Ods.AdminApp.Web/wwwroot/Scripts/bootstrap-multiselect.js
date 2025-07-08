@@ -224,6 +224,25 @@
         this.options.onInitialized(this.$select, this.$container);
     }
 
+    /**
+     * Escapes HTML characters to prevent XSS attacks
+     * @param {string} text - The text to escape
+     * @returns {string} - The escaped text
+     */
+    function escapeHtml(text) {
+        if (typeof text !== 'string') {
+            return text;
+        }
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
     Multiselect.prototype = {
 
         defaults: {
@@ -856,7 +875,7 @@
             $li.addClass(classes);
 
             if (this.options.enableHTML) {
-                $label.html(" " + label);
+                $label.html(" " + escapeHtml(label));
             }
             else {
                 $label.text(" " + label);
@@ -925,7 +944,7 @@
             $li.addClass(classes);
 
             if (this.options.enableHTML) {
-                $('label b', $li).html(" " + label);
+                $('label b', $li).html(" " + escapeHtml(label));
             }
             else {
                 $('label b', $li).text(" " + label);
@@ -936,7 +955,7 @@
             }
 
             if (this.options.enableClickableOptGroups && this.options.multiple) {
-                $('a label', $li).prepend('<input type="checkbox" value="' + value + '"/>');
+                $('a label', $li).prepend('<input type="checkbox" value="' + escapeHtml(value) + '"/>');
             }
 
             if ($(group).is(':disabled')) {
@@ -974,7 +993,7 @@
                 $('label', $li).addClass("checkbox");
 
                 if (this.options.enableHTML) {
-                    $('label', $li).html(" " + this.options.selectAllText);
+                    $('label', $li).html(" " + escapeHtml(this.options.selectAllText));
                 }
                 else {
                     $('label', $li).text(" " + this.options.selectAllText);
